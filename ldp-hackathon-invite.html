@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LDP Hackathon 2026</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #0a0a0f;
+      color: #e8e8e8;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      z-index: 0;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .glow-orb.purple { width: 400px; height: 400px; background: #7c3aed; top: -100px; right: -100px; }
+    .glow-orb.blue { width: 300px; height: 300px; background: #2563eb; bottom: 20%; left: -80px; animation-delay: -3s; }
+    .glow-orb.pink { width: 250px; height: 250px; background: #ec4899; bottom: -50px; right: 20%; animation-delay: -5s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(20px, -30px) scale(1.1); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #fff 0%, #a78bfa 50%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      color: #94a3b8;
+      margin-top: 12px;
+    }
+
+    .dates {
+      margin-top: 32px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .date-chip {
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .date-chip.urgent {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
+      50% { box-shadow: 0 0 20px 4px rgba(239, 68, 68, 0.15); }
+    }
+
+    .section {
+      margin-bottom: 48px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title .icon {
+      font-size: 1.8rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .themes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .theme-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.2s ease;
+      cursor: default;
+    }
+
+    .theme-card:hover {
+      background: rgba(124, 58, 237, 0.1);
+      border-color: rgba(124, 58, 237, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .theme-card .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: #7c3aed;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .theme-card .name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .theme-card .desc {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    .judging-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .judging-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .judging-item .label {
+      width: 160px;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .judging-item .bar-track {
+      flex: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .judging-item .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #7c3aed, #2563eb);
+      transition: width 1s ease;
+    }
+
+    .judging-item .pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #a78bfa;
+      width: 40px;
+      text-align: right;
+    }
+
+    .prizes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .prize-card {
+      text-align: center;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .prize-card.gold {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(234, 179, 8, 0.02));
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+
+    .prize-card.silver {
+      background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.02));
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    .prize-card .trophy { font-size: 2.5rem; margin-bottom: 8px; }
+    .prize-card .place { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+    .prize-card .amount { font-family: 'JetBrains Mono', monospace; color: #a78bfa; }
+
+    .cta {
+      text-align: center;
+      margin-top: 60px;
+      padding: 40px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(37, 99, 235, 0.1));
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      border-radius: 20px;
+    }
+
+    .cta h2 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    .cta p {
+      color: #94a3b8;
+      margin-bottom: 24px;
+      font-size: 1rem;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: white;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
+    }
+
+    .format-note {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .tldr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.8;
+      padding: 20px;
+    }
+
+    .tldr span {
+      color: #7c3aed;
+      font-weight: 700;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: #475569;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="glow-orb purple"></div>
+  <div class="glow-orb blue"></div>
+  <div class="glow-orb pink"></div>
+
+  <div class="container">
+    <div class="hero">
+      <div class="badge">You're Invited</div>
+      <h1>LDP Hackathon</h1>
+      <p class="subtitle">5 days. your wildest LDP ideas. let's build.</p>
+
+      <div class="dates">
+        <div class="date-chip">Jun 8 &ndash; 12 // Hack Week</div>
+        <div class="date-chip urgent">Jun 4 // Teams + Ideas Due</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">&#x1f4a1;</span> The Deal</div>
+      <div class="card tldr">
+        <span>&gt;</span> grab a team (mix of eng, QA, product, design &mdash; your call)<br>
+        <span>&gt;</span> pick a theme (or make up your own, we're not cops)<br>
+        <span>&gt;</span> build something cool for the LDP<br>
+        <span>&gt;</span> present it in 5 min to the crew + guest judges<br>
+        <span>&gt;</span> win prizes, glory, and bragging rights<br>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">&#x1f3af;</span> Theme Inspiration</div>
+      <div class="themes-grid">
+        <div class="theme-card">
+          <div class="num">01</div>
+          <div class="name">UI / Layout</div>
+          <div class="desc">Modernize the page. Modular layouts, fresh gallery, smarter hierarchy.</div>
+        </div>
+        <div class="theme-card">
+          <div class="num">02</div>
+          <div class="name">New Data</div>
+          <div class="desc">Surface partner data without the clutter. Progressive disclosure FTW.</div>
+        </div>
+        <div class="theme-card">
+          <div class="num">03</div>
+          <div class="name">Visualizations</div>
+          <div class="desc">Floorplans, 3D walkthroughs, AI staging. Make images do more.</div>
+        </div>
+        <div class="theme-card">
+          <div class="num">04</div>
+          <div class="name">App First</div>
+          <div class="desc">Native-only interactions. Haptics, gestures, known-user magic.</div>
+        </div>
+        <div class="theme-card">
+          <div class="num">05</div>
+          <div class="name">Performance</div>
+          <div class="desc">Faster LDPs = more leads. Prefetch, lazy-load, cache everything.</div>
+        </div>
+        <div class="theme-card">
+          <div class="num">06</div>
+          <div class="name">Personalization</div>
+          <div class="desc">"Why this home" sections, commute overlays, save-aware pages.</div>
+        </div>
+        <div class="theme-card">
+          <div class="num">07</div>
+          <div class="name">Revenue Max</div>
+          <div class="desc">Native ad formats that don't suck. Smarter placements, better mix.</div>
+        </div>
+        <div class="theme-card">
+          <div class="num">08</div>
+          <div class="name">Config Driven</div>
+          <div class="desc">Rules engines & admin tools. Kill one-off display logic forever.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">&#x2696;&#xfe0f;</span> How You're Judged</div>
+      <div class="card">
+        <div class="judging-bars">
+          <div class="judging-item">
+            <div class="label">Consumer Benefit</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div>
+            <div class="pct">35%</div>
+          </div>
+          <div class="judging-item">
+            <div class="label">Execution</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 71%"></div></div>
+            <div class="pct">25%</div>
+          </div>
+          <div class="judging-item">
+            <div class="label">Revenue Benefit</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 43%"></div></div>
+            <div class="pct">15%</div>
+          </div>
+          <div class="judging-item">
+            <div class="label">Innovation</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 43%"></div></div>
+            <div class="pct">15%</div>
+          </div>
+          <div class="judging-item">
+            <div class="label">Presentation</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 28%"></div></div>
+            <div class="pct">10%</div>
+          </div>
+        </div>
+        <p class="format-note">Everyone votes via survey after each 5-min presentation. No single judge panel &mdash; the people decide.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="icon">&#x1f3c6;</span> Prizes</div>
+      <div class="prizes">
+        <div class="prize-card gold">
+          <div class="trophy">&#x1f947;</div>
+          <div class="place">1st Place</div>
+          <div class="amount">$100 Amazon / person</div>
+        </div>
+        <div class="prize-card silver">
+          <div class="trophy">&#x1f948;</div>
+          <div class="place">2nd Place</div>
+          <div class="amount">$50 Amazon / person</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <h2>Ready to hack?</h2>
+      <p>Form your team, pick your idea, and sign up by June 4th.</p>
+      <a href="https://docs.google.com/spreadsheets/d/1s9wlqVH9Ggle0kz6yG22Ydzyi7x4I8xTzZvcWk-sa28/edit?gid=0#gid=0" class="cta-button">Sign Up Your Team &rarr;</a>
+      <p class="format-note">Teams can be any mix of eng, QA, product, and design.<br>Product &amp; design folks can also float as resources across teams.</p>
+    </div>
+
+    <footer>
+      LDP Hackathon &bull; June 8&ndash;12, 2026 &bull; Realtor.com
+    </footer>
+  </div>
+</body>
+</html>
